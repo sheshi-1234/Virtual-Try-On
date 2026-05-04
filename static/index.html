@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Try On</title>
+    <!-- Mediapipe Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        accent: '#ff3366',
+                        'accent-hover': '#ff1a53',
+                        panel: 'rgba(18, 18, 25, 0.65)',
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-[#0a0a0f] text-white min-h-screen overflow-x-hidden"
+    style="background: radial-gradient(circle at 50% 0%, #251025 0%, #0a0a0f 80%); background-attachment: fixed;">
+    <div class="max-w-[1600px] mx-auto p-4 md:p-6 flex flex-col gap-4 h-screen">
+        <!-- Header -->
+        <header class="glass-panel rounded-full flex justify-between items-center px-8 py-3">
+            <div class="brand">
+                <h1 class="text-2xl font-semibold tracking-tight">Virtual <span class="text-accent font-light">Try
+                        On</span></h1>
+            </div>
+            <div
+                class="skin-tone-display flex items-center gap-3 bg-black/40 px-4 py-2 rounded-full border border-white/5 text-sm font-medium">
+                <div class="w-5 h-5 rounded-full border-2 border-white/80 shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+                    id="skinToneSwatch" style="background-color: #333;"></div>
+                <span id="skinToneLabel">Detecting Skin Tone...</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-5 min-h-0">
+            <!-- Left Panel: Controls -->
+            <aside class="glass-panel rounded-3xl p-5 flex flex-col gap-4 overflow-y-auto custom-scroll">
+                <h2 class="text-xl font-medium mb-1">Studio Controls</h2>
+
+                <!-- Lipstick Section -->
+                <div class="control-group">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="font-medium text-[1.05rem]">Lipstick</label>
+                        <label class="switch">
+                            <input type="checkbox" id="lipstickToggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <div class="flex flex-wrap gap-2" id="lipstickColors">
+                            <button class="color-btn active" style="background-color: #c71585;" data-color="#c71585"
+                                title="Berry"></button>
+                            <button class="color-btn" style="background-color: #ff0000;" data-color="#ff0000"
+                                title="Classic Red"></button>
+                            <button class="color-btn" style="background-color: #8b0000;" data-color="#8b0000"
+                                title="Vamp"></button>
+                            <button class="color-btn" style="background-color: #ff69b4;" data-color="#ff69b4"
+                                title="Hot Pink"></button>
+                            <button class="color-btn" style="background-color: #d2691e;" data-color="#d2691e"
+                                title="Caramel"></button>
+                            <button class="color-btn" style="background-color: #e0ac69;" data-color="#e0ac69"
+                                title="Nude"></button>
+                            <input type="color" id="lipstickCustom" value="#c71585" class="color-picker" title="Custom">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-[#a0a0b0] w-14">Intensity</span>
+                            <input type="range" id="lipstickOpacity" class="custom-range" min="0" max="1" step="0.05"
+                                value="0.7">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blush Section -->
+                <div class="control-group">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="font-medium text-[1.05rem]">Blush</label>
+                        <label class="switch">
+                            <input type="checkbox" id="blushToggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <div class="flex flex-wrap gap-2" id="blushColors">
+                            <button class="color-btn active" style="background-color: #ffb6c1;" data-color="#ffb6c1"
+                                title="Soft Pink"></button>
+                            <button class="color-btn" style="background-color: #ff69b4;" data-color="#ff69b4"
+                                title="Rose"></button>
+                            <button class="color-btn" style="background-color: #cd5c5c;" data-color="#cd5c5c"
+                                title="Brick"></button>
+                            <button class="color-btn" style="background-color: #ff7f50;" data-color="#ff7f50"
+                                title="Coral"></button>
+                            <button class="color-btn" style="background-color: #e9967a;" data-color="#e9967a"
+                                title="Salmon"></button>
+                            <input type="color" id="blushCustom" value="#ffb6c1" class="color-picker" title="Custom">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-[#a0a0b0] w-14">Intensity</span>
+                            <input type="range" id="blushOpacity" class="custom-range" min="0" max="1" step="0.05"
+                                value="0.5">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eyebrow Section -->
+                <div class="control-group">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="font-medium text-[1.05rem]">Eyebrow</label>
+                        <label class="switch">
+                            <input type="checkbox" id="eyebrowToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="flex flex-col gap-3">
+                        <div class="flex flex-wrap gap-2" id="eyebrowColors">
+                            <button class="color-btn active" style="background-color: #3b2f2f;" data-color="#3b2f2f"
+                                title="Dark Brown"></button>
+                            <button class="color-btn" style="background-color: #000000;" data-color="#000000"
+                                title="Black"></button>
+                            <button class="color-btn" style="background-color: #8b4513;" data-color="#8b4513"
+                                title="Auburn"></button>
+                            <button class="color-btn" style="background-color: #a0522d;" data-color="#a0522d"
+                                title="Sienna"></button>
+                            <button class="color-btn" style="background-color: #654321;" data-color="#654321"
+                                title="Chestnut"></button>
+                            <input type="color" id="eyebrowCustom" value="#3b2f2f" class="color-picker" title="Custom">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-[#a0a0b0] w-14">Intensity</span>
+                            <input type="range" id="eyebrowOpacity" class="custom-range" min="0" max="1" step="0.05"
+                                value="0.7">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hats Section (6 options) -->
+                <div class="control-group">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="font-medium text-[1.05rem]">Hats</label>
+                        <label class="switch">
+                            <input type="checkbox" id="hatsToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="flex flex-wrap gap-2" id="hatsOptions">
+                        <button class="style-btn active" data-style="m_fedora">Fedora</button>
+                        <button class="style-btn" data-style="m_cap">Baseball Cap</button>
+                        <button class="style-btn" data-style="m_tophat">Top Hat</button>
+                        <button class="style-btn" data-style="w_sunhat">Sun Hat</button>
+                        <button class="style-btn" data-style="w_beret">Beret</button>
+                        <button class="style-btn" data-style="w_beanie">Beanie</button>
+                    </div>
+                </div>
+
+                <!-- Glasses Section (7 options) -->
+                <div class="control-group">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="font-medium text-[1.05rem]">Glasses</label>
+                        <label class="switch">
+                            <input type="checkbox" id="glassesToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="flex flex-wrap gap-2" id="glassesOptions">
+                        <button class="style-btn active" data-style="aviator">Aviator</button>
+                        <button class="style-btn" data-style="clubmaster">Clubmaster</button>
+                        <button class="style-btn" data-style="rimless">Rimless</button>
+                        <button class="style-btn" data-style="round_oversized">Oversized</button>
+                        <button class="style-btn" data-style="wayfarer">Wayfarer</button>
+                        <button class="style-btn" data-style="hexagon">Hexagon</button>
+                        <button class="style-btn" data-style="sport">Sport Wrap</button>
+                    </div>
+                </div>
+
+                <!-- Earrings Section (8 options) -->
+                <div class="control-group">
+                    <div class="flex justify-between items-center mb-3">
+                        <label class="font-medium text-[1.05rem]">Earrings</label>
+                        <label class="switch">
+                            <input type="checkbox" id="earringsToggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="flex flex-wrap gap-2" id="earringsOptions">
+                        <button class="style-btn active" data-style="jhumka">Gold Jhumka</button>
+                        <button class="style-btn" data-style="chandbali">Chandbali</button>
+                        <button class="style-btn" data-style="meenakari">Meenakari</button>
+                        <button class="style-btn" data-style="polki">Polki Stud</button>
+                        <button class="style-btn" data-style="temple">Temple</button>
+                        <button class="style-btn" data-style="devsena">Devsena</button>
+                        <button class="style-btn" data-style="peacock">Peacock</button>
+                        <button class="style-btn" data-style="passa">Passa Pearl</button>
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <button id="saveBtn" class="primary-btn w-full">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                        </svg>
+                        Save Snapshot
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Center: Video & Canvas -->
+            <section
+                class="glass-panel rounded-3xl p-0 relative flex flex-col items-center justify-center overflow-hidden">
+                <div class="relative w-full h-full flex justify-center items-center rounded-3xl overflow-hidden">
+                    <div id="loading"
+                        class="absolute z-20 text-white text-base bg-black/60 backdrop-blur-md px-6 py-4 rounded-full flex items-center gap-3 border border-white/10">
+                        <div class="w-5 h-5 border-2 border-white/30 border-t-accent rounded-full animate-spin"></div>
+                        <span>Initializing AI Models...</span>
+                    </div>
+                    <video id="inputVideo" class="absolute w-full h-full object-cover scale-x-[-1]" autoplay
+                        playsinline></video>
+                    <canvas id="outputCanvas"
+                        class="absolute w-full h-full object-cover pointer-events-none z-10 scale-x-[-1]"></canvas>
+                </div>
+                <div
+                    class="absolute bottom-6 w-[80%] z-30 bg-black/50 px-6 py-3 rounded-full backdrop-blur-md border border-white/10 shadow-2xl">
+                    <input type="range" id="beforeAfterSlider" class="custom-range w-full" min="0" max="100"
+                        value="100">
+                    <div
+                        class="flex justify-between text-xs font-semibold mt-2 text-[#a0a0b0] uppercase tracking-wider">
+                        <span>Original</span>
+                        <span>Full Effect</span>
+                    </div>
+                </div>
+            </section>
+
+
+        </main>
+    </div>
+
+    <script src="js/makeup.js"></script>
+    <script src="js/faceTracker.js"></script>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>

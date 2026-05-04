@@ -1,0 +1,158 @@
+/* style.css - Maintained only for complex custom components & animations */
+
+/* Glass Panel Base (Tailwind used for rest) */
+.glass-panel {
+    background: rgba(18, 18, 25, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* Custom Scrollbar */
+.custom-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+}
+
+/* Color Buttons */
+.color-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s;
+    outline: none;
+}
+.color-btn:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.color-btn.active {
+    border-color: white;
+    transform: scale(1.15);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
+}
+
+/* Color Picker */
+.color-picker {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+    transition: transform 0.2s;
+}
+.color-picker:hover {
+    transform: scale(1.1);
+}
+.color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+.color-picker::-webkit-color-swatch {
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 50%;
+}
+
+/* Style Buttons */
+.style-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #a0a0b0;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+.style-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: white;
+}
+.style-btn.active {
+    background: #ff3366;
+    border-color: #ff3366;
+    color: white;
+    box-shadow: 0 0 15px rgba(255, 51, 102, 0.4);
+}
+
+/* Custom Range */
+.custom-range {
+    -webkit-appearance: none;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    outline: none;
+    flex: 1;
+}
+.custom-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #ff3366;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.custom-range::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+/* Switch Toggle */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 22px;
+}
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255,255,255,0.1);
+    transition: .4s;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 22px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: #ff3366;
+    border-color: #ff3366;
+}
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* Primary Button */
+.primary-btn {
+    background: linear-gradient(135deg, #ff3366, #ff6b8b);
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4);
+    border-radius: 12px;
+    padding: 12px 20px;
+}
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 51, 102, 0.4);
+}
